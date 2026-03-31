@@ -1,0 +1,7 @@
+{
+  "name": "FaceShape AI - 实时脸型识别",
+  "description": "基于人工智能的实时摄像头脸型识别系统，支持识别瓜子脸、圆脸、方形脸、长脸、鹅蛋脸、椭圆脸、菱形脸。",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
