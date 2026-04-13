@@ -509,9 +509,9 @@ export default function App() {
         2. 结构神韵：模仿汉字的“间架结构”与“骨干”，呈现出一种“伪文字”(Pseudo-logographic)的形态。线条之间应有呼应、避让和重心的平衡感，仿佛是某种失传的古老文字或未来天书。
         3. 似是而非：严禁生成任何标准的、可阅读的汉字。它应该是汉字被拆解、重组、异化后的视觉残留，保留笔画的起承转合，达到“似像又不像”的境界。
         4. 构图与意境：强调中国书法的空间留白（计白当黑）。展现出一种由生物信号驱动的、具有灵魂厚度的视觉符号。
-        5. 媒介：模拟宣纸上的水墨效果，包含飞白、晕染、浓淡、焦墨等传统技法。
+        5. 媒介与背景：模拟宣纸上的水墨效果，包含飞白、晕染、浓淡、焦墨等传统技法。**必须确保背景为纯白色 (#FFFFFF)，没有任何杂质、阴影或纸张纹理，以便与网页背景完美融合。**
         
-        请直接生成这幅“似像又不像”的解构主义书法艺术作品。
+        请直接生成这幅背景纯白的、具有“似像又不像”美感的解构主义书法艺术作品。
       `;
 
       const response = await ai.models.generateContent({
@@ -544,7 +544,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white p-4 md:p-8 font-sans selection:bg-emerald-500/30">
+    <div className="min-h-screen bg-white text-black p-4 md:p-8 font-sans selection:bg-emerald-500/30">
       {/* Header */}
       <header className="max-w-7xl mx-auto mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
@@ -562,7 +562,7 @@ export default function App() {
             transition={{ delay: 0.1 }}
             className="text-4xl md:text-6xl font-bold tracking-tighter"
           >
-            FaceShape <span className="text-emerald-500 italic">AI</span>
+            Algorithmic Script <span className="text-emerald-500 italic">Allocation</span>
           </motion.h1>
         </div>
         <motion.div 
@@ -589,13 +589,13 @@ export default function App() {
 
           <button 
             onClick={handleRefresh}
-            className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-white/5 border border-white/10 text-white/80 font-mono text-xs uppercase tracking-widest hover:bg-white/10 hover:text-white transition-all active:scale-95 group shadow-lg"
+            className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-black/5 border border-black/10 text-black/80 font-mono text-xs uppercase tracking-widest hover:bg-black/10 hover:text-black transition-all active:scale-95 group shadow-lg"
           >
             <RefreshCw size={16} className="group-hover:rotate-180 transition-transform duration-500" />
             Refresh / Reset
           </button>
 
-          <div className="hidden xl:flex items-center gap-4 text-xs font-mono text-white/40 ml-4">
+          <div className="hidden xl:flex items-center gap-4 text-xs font-mono text-black/40 ml-4">
             <div className="flex items-center gap-2">
               <div className={cn("w-2 h-2 rounded-full animate-pulse", isCameraReady ? "bg-emerald-500" : "bg-red-500")} />
               {isCameraReady ? "SYSTEM ONLINE" : "SYSTEM INITIALIZING"}
@@ -609,21 +609,21 @@ export default function App() {
         <div className="lg:col-span-8 space-y-4">
           <div className="relative aspect-[4/3] rounded-3xl overflow-hidden glass-panel group">
             {!isCameraReady && !error && (
-              <div className="absolute inset-0 flex flex-col items-center justify-center z-20 bg-black/60 backdrop-blur-md">
+              <div className="absolute inset-0 flex flex-col items-center justify-center z-20 bg-white/60 backdrop-blur-md">
                 <RefreshCw className="animate-spin text-emerald-500 mb-4" size={40} />
-                <p className="font-mono text-sm animate-pulse">INITIALIZING CAMERA...</p>
+                <p className="font-mono text-sm animate-pulse text-black">INITIALIZING CAMERA...</p>
               </div>
             )}
             
             {error && (
-              <div className="absolute inset-0 flex flex-col items-center justify-center z-20 bg-red-950/40 backdrop-blur-xl border border-red-500/30 p-8 text-center">
+              <div className="absolute inset-0 flex flex-col items-center justify-center z-20 bg-red-50/80 backdrop-blur-xl border border-red-500/30 p-8 text-center">
                 <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mb-6">
                   <Info className="text-red-500" size={32} />
                 </div>
-                <h3 className="text-xl font-bold text-white mb-2">
+                <h3 className="text-xl font-bold text-black mb-2">
                   {error === 'PERMISSION_DENIED' ? '摄像头权限未开启' : '摄像头启动失败'}
                 </h3>
-                <p className="text-sm text-white/60 mb-8 max-w-md leading-relaxed">
+                <p className="text-sm text-black/60 mb-8 max-w-md leading-relaxed">
                   {error === 'PERMISSION_DENIED' 
                     ? (
                       <>
@@ -660,7 +660,7 @@ export default function App() {
             />
 
             {/* Scanning Overlay */}
-            <div className="absolute inset-0 pointer-events-none border-[20px] border-black/20 z-10" />
+            <div className="absolute inset-0 pointer-events-none border-[20px] border-white/20 z-10" />
             <div className="scanner-line" />
             
             {/* Corner Accents */}
@@ -684,8 +684,8 @@ export default function App() {
                 <Activity size={18} />
               </div>
               <div>
-                <p className="text-[10px] text-white/40 uppercase font-mono">Confidence</p>
-                <p className="font-mono text-sm">{result ? `${(result.confidence * 100).toFixed(0)}%` : '--'}</p>
+                <p className="text-[10px] text-black/40 uppercase font-mono">Confidence</p>
+                <p className="font-mono text-sm text-black">{result ? `${(result.confidence * 100).toFixed(0)}%` : '--'}</p>
               </div>
             </div>
             <div className="glass-panel p-4 rounded-2xl flex items-center gap-3">
@@ -693,8 +693,8 @@ export default function App() {
                 <User size={18} />
               </div>
               <div>
-                <p className="text-[10px] text-white/40 uppercase font-mono">Face Detected</p>
-                <p className="font-mono text-sm">{result ? 'YES' : 'NO'}</p>
+                <p className="text-[10px] text-black/40 uppercase font-mono">Face Detected</p>
+                <p className="font-mono text-sm text-black">{result ? 'YES' : 'NO'}</p>
               </div>
             </div>
             <div className="glass-panel p-4 rounded-2xl flex items-center gap-3">
@@ -702,8 +702,8 @@ export default function App() {
                 <LayoutGrid size={18} />
               </div>
               <div>
-                <p className="text-[10px] text-white/40 uppercase font-mono">Landmarks</p>
-                <p className="font-mono text-sm">478 PTS</p>
+                <p className="text-[10px] text-black/40 uppercase font-mono">Landmarks</p>
+                <p className="font-mono text-sm text-black">478 PTS</p>
               </div>
             </div>
           </div>
@@ -711,8 +711,8 @@ export default function App() {
 
         {/* Info Section */}
         <aside className="lg:col-span-4 space-y-6">
-          <section className="glass-panel p-6 rounded-3xl border-emerald-500/20 bg-emerald-500/5">
-            <h2 className="text-xs font-mono text-emerald-500 uppercase tracking-[0.2em] mb-4">Color Recognition</h2>
+          <section className="glass-panel p-6 rounded-3xl border-black/10 bg-black/[0.02]">
+            <h2 className="text-xs font-mono text-emerald-600 uppercase tracking-[0.2em] mb-4">Color Recognition</h2>
             <AnimatePresence mode="wait">
               {result?.clothingColor ? (
                 <motion.div
@@ -723,7 +723,7 @@ export default function App() {
                   className="flex items-center gap-4"
                 >
                   <div 
-                    className="w-12 h-12 rounded-2xl shadow-inner border border-white/10"
+                    className="w-12 h-12 rounded-2xl shadow-inner border border-black/10"
                     style={{ 
                       backgroundColor: result.sampledRgb ? `rgb(${result.sampledRgb.r}, ${result.sampledRgb.g}, ${result.sampledRgb.b})` : 
                                        result.colorCategory === 'warm' ? '#f87171' : 
@@ -732,9 +732,9 @@ export default function App() {
                     }}
                   />
                   <div>
-                    <p className="text-[10px] font-mono text-white/40 uppercase tracking-widest">Detected Color</p>
+                    <p className="text-[10px] font-mono text-black/40 uppercase tracking-widest">Detected Color</p>
                     <div className="flex items-center gap-2">
-                      <span className="text-xl font-bold tracking-tighter">{result.clothingColor}</span>
+                      <span className="text-xl font-bold tracking-tighter text-black">{result.clothingColor}</span>
                       <span className={cn(
                         "text-[10px] font-mono px-2 py-0.5 rounded border",
                         result.colorCategory === 'warm' ? "bg-red-500/10 border-red-500/20 text-red-400" :
@@ -747,13 +747,13 @@ export default function App() {
                   </div>
                 </motion.div>
               ) : (
-                <p className="text-[10px] font-mono text-white/20 italic">Waiting for color sampling...</p>
+                <p className="text-[10px] font-mono text-black/20 italic">Waiting for color sampling...</p>
               )}
             </AnimatePresence>
           </section>
 
-          <section className="glass-panel p-6 rounded-3xl border-emerald-500/20 bg-emerald-500/5">
-            <h2 className="text-xs font-mono text-emerald-500 uppercase tracking-[0.2em] mb-4">Analysis Result</h2>
+          <section className="glass-panel p-6 rounded-3xl border-black/10 bg-black/[0.02]">
+            <h2 className="text-xs font-mono text-emerald-600 uppercase tracking-[0.2em] mb-4">Analysis Result</h2>
             
             <AnimatePresence mode="wait">
               {result ? (
@@ -765,40 +765,40 @@ export default function App() {
                   className="space-y-6"
                 >
                   <div className="space-y-1">
-                    <p className="text-[10px] font-mono text-white/40 uppercase tracking-widest">Face Shape & Type</p>
+                    <p className="text-[10px] font-mono text-black/40 uppercase tracking-widest">Face Result</p>
                     <div className="flex items-baseline gap-2">
-                      <span className="text-4xl font-bold tracking-tighter">{result.macroCategory}</span>
+                      <span className="text-4xl font-bold tracking-tighter text-black">{result.macroCategory}</span>
                       <span className="text-xs font-mono text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
                         {result.shape}
                       </span>
                     </div>
-                    <p className="text-white/60 leading-relaxed text-xs">
+                    <p className="text-black/60 leading-relaxed text-xs">
                       {getShapeDescription(result.shape)}
                     </p>
                   </div>
 
-                  <div className="pt-4 border-t border-white/10 space-y-1">
-                    <p className="text-[10px] font-mono text-white/40 uppercase tracking-widest">Current Emotion</p>
+                  <div className="pt-4 border-t border-black/15 space-y-1">
+                    <p className="text-[10px] font-mono text-black/40 uppercase tracking-widest">Emotion Result</p>
                     <div className="flex items-center gap-3">
-                      <span className="text-3xl font-bold tracking-tighter text-emerald-400">{result.emotion}</span>
+                      <span className="text-3xl font-bold tracking-tighter text-emerald-500">{result.emotion}</span>
                       <div className="px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20 text-[10px] font-mono text-emerald-500">
                         LIVE_FEED
                       </div>
                     </div>
                   </div>
 
-                  <div className="pt-4 border-t border-white/10 space-y-4">
-                    <p className="text-[10px] font-mono text-white/40 uppercase tracking-widest">Abstract Face Art</p>
+                  <div className="pt-4 border-t border-black/15 space-y-4">
+                    <p className="text-[10px] font-mono text-black/40 uppercase tracking-widest">Abstract Face Art</p>
                     {artImageUrl ? (
                       <motion.div 
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        className="relative aspect-square rounded-2xl overflow-hidden border border-white/10 bg-white/5 group"
+                        className="relative aspect-square rounded-2xl overflow-hidden border border-black/10 bg-white group"
                       >
                         <img 
                           src={artImageUrl} 
                           alt="Abstract Face Art" 
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-cover mix-blend-multiply"
                           referrerPolicy="no-referrer"
                         />
                         <button 
@@ -839,14 +839,14 @@ export default function App() {
               ) : (
                 <div className="space-y-4 py-8 flex flex-col items-center justify-center text-center">
                   <div className="w-12 h-12 border-2 border-emerald-500/20 border-t-emerald-500 rounded-full animate-spin mb-4" />
-                  <p className="text-white/40 font-mono text-xs uppercase tracking-widest">Waiting for face detection...</p>
+                  <p className="text-black/40 font-mono text-xs uppercase tracking-widest">Waiting for face detection...</p>
                 </div>
               )}
             </AnimatePresence>
           </section>
 
-          <section className="glass-panel p-6 rounded-3xl space-y-6">
-            <h2 className="text-xs font-mono text-white/40 uppercase tracking-[0.2em]">Geometric Metrics</h2>
+          <section className="glass-panel p-6 rounded-3xl space-y-6 border-black/10 bg-black/[0.02]">
+            <h2 className="text-xs font-mono text-black/40 uppercase tracking-[0.2em]">Geometric Metrics</h2>
             
             <div className="space-y-4">
               <MetricRow 
@@ -867,10 +867,10 @@ export default function App() {
             </div>
           </section>
 
-          <div className="p-6 rounded-3xl bg-white/5 border border-white/10">
+          <div className="p-6 rounded-3xl bg-black/5 border border-black/10">
             <div className="flex items-start gap-3">
               <Info size={16} className="text-emerald-500 shrink-0 mt-0.5" />
-              <p className="text-[11px] text-white/40 leading-relaxed">
+              <p className="text-[11px] text-black/40 leading-relaxed">
                 识别结果基于面部关键点比例计算，受光照、角度及表情影响。建议在光线充足的环境下，保持面部正对摄像头以获得最准确的分析。
               </p>
             </div>
@@ -878,8 +878,8 @@ export default function App() {
         </aside>
       </main>
       
-      <footer className="max-w-7xl mx-auto mt-12 pt-8 border-t border-white/5 flex justify-between items-center text-[10px] font-mono text-white/20 uppercase tracking-widest">
-        <div>© 2026 FACESHAPE AI LABS</div>
+      <footer className="max-w-7xl mx-auto mt-12 pt-8 border-t border-black/5 flex justify-between items-center text-[10px] font-mono text-black/20 uppercase tracking-widest">
+        <div>© 2026 ALGORITHMIC SCRIPT ALLOCATION</div>
         <div className="flex gap-6">
           <a href="#" className="hover:text-emerald-500 transition-colors">Privacy</a>
           <a href="#" className="hover:text-emerald-500 transition-colors">Terms</a>
@@ -894,17 +894,17 @@ function MetricRow({ label, value, target }: { label: string; value: number; tar
   return (
     <div className="space-y-1.5">
       <div className="flex justify-between text-[10px] font-mono uppercase tracking-wider">
-        <span className="text-white/40">{label}</span>
+        <span className="text-black/40">{label}</span>
         <span className="text-emerald-500">{value.toFixed(2)}</span>
       </div>
-      <div className="h-1 bg-white/5 rounded-full overflow-hidden">
+      <div className="h-1 bg-black/5 rounded-full overflow-hidden">
         <motion.div 
           className="h-full bg-emerald-500"
           initial={{ width: 0 }}
           animate={{ width: `${Math.min(value * 50, 100)}%` }}
         />
       </div>
-      <div className="flex justify-between text-[9px] font-mono text-white/20">
+      <div className="flex justify-between text-[9px] font-mono text-black/20">
         <span>REF: {target}</span>
       </div>
     </div>

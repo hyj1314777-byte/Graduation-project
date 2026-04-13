@@ -6,8 +6,8 @@
 }
 
 :root {
-  --bg: #0a0a0a;
-  --ink: #ffffff;
+  --bg: #ffffff;
+  --ink: #0a0a0a;
   --accent: #10b981; /* Emerald-500 */
 }
 
@@ -20,7 +20,7 @@ body {
 .scanner-line {
   height: 2px;
   background: linear-gradient(90deg, transparent, var(--accent), transparent);
-  box-shadow: 0 0 15px var(--accent);
+  box-shadow: 0 0 10px var(--accent);
   position: absolute;
   width: 100%;
   z-index: 10;
@@ -34,7 +34,7 @@ body {
 }
 
 .glass-panel {
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(0, 0, 0, 0.02);
   backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.12);
 }
