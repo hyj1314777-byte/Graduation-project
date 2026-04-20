@@ -15,7 +15,8 @@ import {
   ChevronRight, 
   Maximize2,
   Cpu,
-  Scan
+  Scan,
+  Download
 } from 'lucide-react';
 import { cn, FaceShape, Emotion, FaceAnalysisResult } from './types';
 import { analyzeFaceShape } from './faceAnalysis';
@@ -49,6 +50,69 @@ export default function App() {
   const [isGeneratingArt, setIsGeneratingArt] = useState(false);
   const [artImageUrl, setArtImageUrl] = useState<string | null>(null);
   const [artError, setArtError] = useState<string | null>(null);
+  const [isAutoDownload, setIsAutoDownload] = useState(false);
+
+  const downloadImage = async (url: string) => {
+    try {
+      const response = await fetch(url);
+      const blob = await response.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      
+      const link = document.createElement('a');
+      link.href = blobUrl;
+      const timestamp = new Date().getTime();
+      link.download = `Algorithm_Allocation_Art_${timestamp}.png`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(blobUrl);
+    } catch (e) {
+      console.error("Download failed", e);
+    }
+  };
+
+  const downloadPortrait = () => {
+    if (!canvasRef.current || !videoRef.current) return;
+    
+    const tempCanvas = document.createElement('canvas');
+    tempCanvas.width = canvasRef.current.width;
+    tempCanvas.height = canvasRef.current.height;
+    const tempCtx = tempCanvas.getContext('2d');
+    if (!tempCtx) return;
+
+    // Draw video background
+    tempCtx.drawImage(videoRef.current, 0, 0, tempCanvas.width, tempCanvas.height);
+    // Overlay landmarks
+    tempCtx.drawImage(canvasRef.current, 0, 0, tempCanvas.width, tempCanvas.height);
+
+    // Add HUD elements only to the downloaded image to keep them in the record
+    const pad = 32;
+    const len = 40;
+    tempCtx.strokeStyle = '#10b981';
+    tempCtx.lineWidth = 2;
+    // Top Left
+    tempCtx.beginPath(); tempCtx.moveTo(pad, pad + len); tempCtx.lineTo(pad, pad); tempCtx.lineTo(pad + len, pad); tempCtx.stroke();
+    // Top Right
+    tempCtx.beginPath(); tempCtx.moveTo(tempCanvas.width - pad - len, pad); tempCtx.lineTo(tempCanvas.width - pad, pad); tempCtx.lineTo(tempCanvas.width - pad, pad + len); tempCtx.stroke();
+    // Bottom Left
+    tempCtx.beginPath(); tempCtx.moveTo(pad, tempCanvas.height - pad - len); tempCtx.lineTo(pad, tempCanvas.height - pad); tempCtx.lineTo(pad + len, tempCanvas.height - pad); tempCtx.stroke();
+    // Bottom Right
+    tempCtx.beginPath(); tempCtx.moveTo(tempCanvas.width - pad - len, tempCanvas.height - pad); tempCtx.lineTo(tempCanvas.width - pad, tempCanvas.height - pad); tempCtx.lineTo(tempCanvas.width - pad, tempCanvas.height - pad - len); tempCtx.stroke();
+
+    tempCtx.fillStyle = '#10b981';
+    tempCtx.font = 'bold 12px monospace';
+    tempCtx.fillText('ALGORITHMIC_TRACKING: ACTIVE', pad + 10, pad + 25);
+    tempCtx.fillText('SYSTEM_ONLINE_60FPS', tempCanvas.width - pad - 140, tempCanvas.height - pad - 15);
+
+    const url = tempCanvas.toDataURL('image/png');
+    const link = document.createElement('a');
+    link.href = url;
+    const timestamp = new Date().getTime();
+    link.download = `Algorithm_Allocation_Portrait_${timestamp}.png`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   const detectHairline = (video: HTMLVideoElement, topPoint: {x: number, y: number}, faceHeight: number) => {
     const sampleCanvas = sampleCanvasRef.current;
@@ -153,8 +217,13 @@ export default function App() {
           console.error("Color sampling failed", e);
         }
 
-        // 2. Clear the image to restore the high-tech overlay look
-        canvasCtx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+        // 2. We don't clear the image here anymore to allow it to be part of the capture,
+        // but we overlay a slight darkening to keep the tech look if we want, 
+        // or just draw the landmarks on top.
+        // canvasCtx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+        
+        canvasCtx.fillStyle = 'rgba(0,0,0,0.1)';
+        canvasCtx.fillRect(0, 0, canvasRef.current.width, canvasRef.current.height);
 
         // 3. Draw detailed landmarks for "precision" look
         canvasCtx.globalAlpha = 0.15;
@@ -187,11 +256,7 @@ export default function App() {
         const minY = Math.min(...yCoords), maxY = Math.max(...yCoords);
         const padding = 20;
         
-        canvasCtx.strokeStyle = 'rgba(16, 185, 129, 0.4)';
-        canvasCtx.lineWidth = 1;
-        canvasCtx.strokeRect(minX - padding, minY - padding, (maxX - minX) + padding * 2, (maxY - minY) + padding * 2);
-        
-        // Draw small corner markers for the box
+        // Draw small corner markers for the box (Initial look)
         const box = { x: minX - padding, y: minY - padding, w: (maxX - minX) + padding * 2, h: (maxY - minY) + padding * 2 };
         canvasCtx.fillStyle = '#10b981';
         canvasCtx.fillRect(box.x, box.y, 10, 2);
@@ -440,6 +505,11 @@ export default function App() {
     if (!result) return;
     setArtError(null);
 
+    // Save current portrait if auto-download is enabled
+    if (isAutoDownload) {
+      downloadPortrait();
+    }
+
     setIsGeneratingArt(true);
     try {
       const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
@@ -527,8 +597,14 @@ export default function App() {
       if (response.candidates?.[0]?.content?.parts) {
         for (const part of response.candidates[0].content.parts) {
           if (part.inlineData) {
-            setArtImageUrl(`data:image/png;base64,${part.inlineData.data}`);
+            const dataUrl = `data:image/png;base64,${part.inlineData.data}`;
+            setArtImageUrl(dataUrl);
             setArtError(null);
+            
+            if (isAutoDownload) {
+              // Add a slight delay for the second download to ensure browser allows both
+              setTimeout(() => downloadImage(dataUrl), 500);
+            }
             break;
           }
         }
@@ -788,7 +864,21 @@ export default function App() {
                   </div>
 
                   <div className="pt-4 border-t border-black/15 space-y-4">
-                    <p className="text-[10px] font-mono text-black/40 uppercase tracking-widest">Abstract Face Art</p>
+                    <div className="flex items-center justify-between">
+                      <p className="text-[10px] font-mono text-black/40 uppercase tracking-widest">Abstract Face Art</p>
+                      <button 
+                        onClick={() => setIsAutoDownload(!isAutoDownload)}
+                        className={cn(
+                          "flex items-center gap-2 px-2 py-1 rounded-lg text-[9px] font-mono border transition-all uppercase tracking-tighter",
+                          isAutoDownload 
+                            ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-600" 
+                            : "bg-black/5 border-black/10 text-black/40"
+                        )}
+                      >
+                        <Download size={10} />
+                        Auto-Download (Art + Portrait): {isAutoDownload ? 'ON' : 'OFF'}
+                      </button>
+                    </div>
                     {artImageUrl ? (
                       <motion.div 
                         initial={{ opacity: 0, scale: 0.9 }}
